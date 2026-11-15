@@ -1,0 +1,25 @@
+name: Build
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Build
+        run: |
+          mkdir work
+          unzip -q MoonCityX-source.zip -d work
+          rm -rf work/.github
+          mkdir -p work/libs-in
+          cp mooncityvehicles*.jar work/libs-in/ || true
+          cd work
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mooncityx-jar
+          path: work/build/libs/*.jar
